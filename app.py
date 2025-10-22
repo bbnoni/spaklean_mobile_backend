@@ -44,6 +44,7 @@ def login():
 def scoreboard():
     # Dummy data
     # Dummy data
+    #WEB HOOK TEST
     data = [
         {"name": "John Doe", "score": 85, "category": "Facility Inspection"},
         {"name": "Mary Jane", "score": 90, "category": "Task Compliance"},
