@@ -43,6 +43,7 @@ def login():
 @jwt_required()
 def scoreboard():
     # Dummy data
+    # Dummy data
     data = [
         {"name": "John Doe", "score": 85, "category": "Facility Inspection"},
         {"name": "Mary Jane", "score": 90, "category": "Task Compliance"},
