@@ -11,7 +11,8 @@ CORS(app)
 app.config["JWT_SECRET_KEY"] = "spaklean_secret_key"
 jwt = JWTManager(app)
 
-# Dummy users for testing
+# Dummy users for testing purposes
+# Dummy users for testing purposes
 USERS = {
     "admin@spaklean.com": {"password": "admin123", "role": "Admin"},
     "custodian@spaklean.com": {"password": "custodian123", "role": "Custodian"},
