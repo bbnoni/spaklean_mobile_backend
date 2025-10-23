@@ -19,7 +19,7 @@ def register():
         first_name=data['first_name'],
         last_name=data['last_name'],
         email=data['email'],
-        password_hash=generate_password_hash(data['password'])
+        password_hash=generate_password_hash(data['password']) ##check
     )
     db.session.add(user)
     db.session.commit()
