@@ -1,4 +1,6 @@
 import os
+os.environ.pop("DATABASE_URL", None)
+
 
 class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv(
