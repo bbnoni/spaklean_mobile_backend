@@ -32,8 +32,8 @@ def login():
     data = request.get_json()
     user = User.query.filter_by(email=data.get('email')).first()
 
-    #if not user or not check_password_hash(user.password_hash, data.get('password')):
-    if not user or user.password_hash != data.get('password'):    
+    if not user or not check_password_hash(user.password_hash, data.get('password')):
+    #if not user or user.password_hash != data.get('password'):    
         return jsonify({"error": "Invalid email or password"}), 401
 
     token = create_access_token(identity=user.id)
