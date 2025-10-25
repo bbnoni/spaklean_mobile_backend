@@ -6,6 +6,10 @@ from config import Config
 from models import db
 from routes.auth_routes import auth_bp
 
+# Import models so Flask-Migrate can detect them
+from models.user import User
+from models.location import Location, Sector, Category, Room, Assignment
+
 # Initialize Flask App
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -26,4 +30,6 @@ app.register_blueprint(auth_bp)
 
 # Entry Point
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()  # ✅ Ensure all models create tables if not exist
     app.run(host="0.0.0.0", port=5001)
