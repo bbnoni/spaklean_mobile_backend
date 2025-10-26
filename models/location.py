@@ -1,12 +1,8 @@
+from models import db   # ✅ make sure this line is at the top
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
-
-# Create local reference to db (initialized in __init__.py)
-db = SQLAlchemy()
 
 # ----------------- Location Hierarchy Models -----------------
 
-# Main Location Table (e.g., Aviation, Freezones)
 class Location(db.Model):
     __tablename__ = 'locations'
     id = db.Column(db.Integer, primary_key=True)
@@ -20,7 +16,6 @@ class Location(db.Model):
         return f"<Location {self.name}>"
 
 
-# Sector Table (e.g., Airlines, Banking, Health)
 class Sector(db.Model):
     __tablename__ = 'sectors'
     id = db.Column(db.Integer, primary_key=True)
@@ -34,7 +29,6 @@ class Sector(db.Model):
         return f"<Sector {self.name}>"
 
 
-# Category Table (e.g., Ghana Airport Company, Delta, Tap Portugal)
 class Category(db.Model):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
@@ -47,7 +41,6 @@ class Category(db.Model):
         return f"<Category {self.name}>"
 
 
-# Room Table (e.g., A1, A2, Delta Airport Office)
 class Room(db.Model):
     __tablename__ = 'rooms'
     id = db.Column(db.Integer, primary_key=True)
@@ -58,7 +51,6 @@ class Room(db.Model):
         return f"<Room {self.name}>"
 
 
-# Assignment Table (maps users to locations/sectors)
 class Assignment(db.Model):
     __tablename__ = 'assignments'
     id = db.Column(db.Integer, primary_key=True)
