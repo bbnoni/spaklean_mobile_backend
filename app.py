@@ -22,6 +22,19 @@ db.init_app(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
+@jwt.unauthorized_loader
+def _unauth(reason):
+    return jsonify({"error": "Missing/invalid Authorization header", "detail": reason}), 401
+
+@jwt.invalid_token_loader
+def _invalid(reason):
+    return jsonify({"error": "Invalid token", "detail": reason}), 422
+
+@jwt.expired_token_loader
+def _expired(jwt_header, jwt_payload):
+    return jsonify({"error": "Token expired"}), 401
+
+
 # Routes
 @app.route("/")
 def home():
