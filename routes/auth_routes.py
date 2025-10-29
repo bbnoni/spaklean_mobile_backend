@@ -11,7 +11,7 @@ auth_bp = Blueprint('auth_bp', __name__)
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    
+
     # Validate input fields
     if not data or not all(k in data for k in ['first_name', 'last_name', 'email', 'password']):
         return jsonify({"error": "Missing required fields"}), 400
@@ -30,6 +30,8 @@ def register():
     db.session.add(user)
     db.session.commit()
 
+    print(f"✅ New user registered: {user.email}")
+
     return jsonify({"message": "User registered successfully"}), 201
 
 
@@ -45,10 +47,17 @@ def login():
 
     # Validate credentials
     if not user or not check_password_hash(user.password_hash, password):
+        print(f"❌ Failed login attempt for {email}")
         return jsonify({"error": "Invalid email or password"}), 401
 
-    # Create JWT token (8-hour expiry)
-    access_token = create_access_token(identity=user.id, expires_delta=timedelta(hours=8))
+    # ✅ PyJWT 2.x requires 'sub' (identity) as a string
+    access_token = create_access_token(
+        identity=str(user.id),
+        expires_delta=timedelta(hours=8)
+    )
+
+    print(f"🔐 Login successful for {user.email} (Role: {user.role})")
+    print(f"🔹 Generated JWT for user_id={user.id}")
 
     # ✅ Return full user details to Flutter
     return jsonify({

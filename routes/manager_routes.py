@@ -8,26 +8,28 @@ manager_bp = Blueprint('manager_bp', __name__)
 @jwt_required()
 def get_manager_locations(user_id):
     try:
-        current_user_id = get_jwt_identity()
+        # identity was stored as str -> convert back to int
+        current_user_id = int(get_jwt_identity())
         print(f"🔹 Token identity = {current_user_id}, requested user_id = {user_id}")
+
+        # Optional: ensure caller is the same user
+        if current_user_id != user_id:
+            return jsonify({"error": "Forbidden: token/user mismatch"}), 403
 
         user = User.query.get(user_id)
         if not user:
-            print("❌ User not found.")
             return jsonify({"error": "User not found"}), 404
 
         if user.role != "Custodial Manager":
-            print(f"❌ Unauthorized role: {user.role}")
             return jsonify({"error": "Unauthorized"}), 403
 
         assignments = Assignment.query.filter_by(user_id=user.id).all()
-        print(f"✅ Found {len(assignments)} assignments for {user.email}")
-
         data = []
         for a in assignments:
             location = Location.query.get(a.location_id)
             if not location:
                 continue
+
             sectors = [
                 {
                     "name": s.name,
@@ -43,7 +45,7 @@ def get_manager_locations(user_id):
             ]
             data.append({"name": location.name, "sectors": sectors})
 
-        return jsonify(data)
+        return jsonify(data), 200
     except Exception as e:
         print(f"❌ Exception in manager route: {e}")
         return jsonify({"error": str(e)}), 500
