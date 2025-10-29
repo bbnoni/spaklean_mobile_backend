@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import db, User, Location, Sector, Category, Room, Assignment
 
 manager_bp = Blueprint('manager_bp', __name__)
@@ -7,6 +7,12 @@ manager_bp = Blueprint('manager_bp', __name__)
 @manager_bp.route("/manager/locations/<int:user_id>")
 @jwt_required()
 def get_manager_locations(user_id):
+    current_user_id = get_jwt_identity()
+    print(f"🔹 Authenticated user ID: {current_user_id}, Requested ID: {user_id}")
+
+    if current_user_id != user_id:
+        return jsonify({"error": "Token mismatch"}), 403
+
     user = User.query.get(user_id)
     if not user or user.role != "Custodial Manager":
         return jsonify({"error": "Unauthorized"}), 403
