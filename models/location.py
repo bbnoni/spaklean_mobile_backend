@@ -46,6 +46,7 @@ class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
+    zone = db.Column(db.String(50))
 
     def __repr__(self):
         return f"<Room {self.name}>"
