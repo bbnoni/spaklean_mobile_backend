@@ -7,6 +7,9 @@ from models import db
 from routes.auth_routes import auth_bp
 from routes.manager_routes import manager_bp
 
+from routes.inspection_routes import inspection_bp
+
+
 
 # Import models so Flask-Migrate can detect them
 from models.user import User
@@ -43,6 +46,7 @@ def home():
 # Register Blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(manager_bp)
+app.register_blueprint(inspection_bp)
 
 # Entry Point
 if __name__ == "__main__":
