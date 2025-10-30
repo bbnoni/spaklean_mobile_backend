@@ -71,7 +71,7 @@ def get_rooms_by_zone(user_id, zone):
         current_user_id = int(get_jwt_identity())
         print(f"🔹 Token identity = {current_user_id}, requested user_id = {user_id}, zone = {zone}")
 
-        # Validate user and role
+        # Validate user and role##
         if current_user_id != user_id:
             return jsonify({"error": "Forbidden: token/user mismatch"}), 403
 
