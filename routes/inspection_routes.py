@@ -11,10 +11,20 @@ def submit_task():
         if not data:
             return jsonify({"error": "Missing request body"}), 400
 
+        # ✅ Handle "null" or empty strings safely
+        room_id = data.get("room_id")
+        if isinstance(room_id, str) and room_id.lower() == "null":
+            room_id = None
+
+        done_on_behalf_user_id = data.get("done_on_behalf_user_id")
+        if isinstance(done_on_behalf_user_id, str) and done_on_behalf_user_id.lower() == "null":
+            done_on_behalf_user_id = None
+
+        # ✅ Create the record safely
         task = InspectionTask(
             user_id=data.get("user_id"),
-            done_on_behalf_user_id=data.get("done_on_behalf_of_user_id"),
-            room_id=data.get("room_id"),
+            done_on_behalf_user_id=done_on_behalf_user_id,
+            room_id=room_id,
             zone_name=data.get("zone_name"),
             latitude=data.get("latitude"),
             longitude=data.get("longitude"),
@@ -30,5 +40,6 @@ def submit_task():
         return jsonify({"message": "Inspection task saved successfully"}), 201
 
     except Exception as e:
+        db.session.rollback()
         print(f"❌ Error in submit_task: {e}")
         return jsonify({"error": str(e)}), 500
