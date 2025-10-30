@@ -63,6 +63,7 @@ def get_manager_locations(user_id):
 
 
 # ---------------- FILTER BY SPECIFIC ZONE ----------------
+
 @manager_bp.route("/manager/locations/<int:user_id>/zone/<string:zone>")
 @jwt_required()
 def get_rooms_by_zone(user_id, zone):
@@ -82,32 +83,27 @@ def get_rooms_by_zone(user_id, zone):
             return jsonify({"error": "Unauthorized"}), 403
 
         assignments = Assignment.query.filter_by(user_id=user.id).all()
-        data = []
+        grouped_data = {}
 
         for a in assignments:
             location = Location.query.get(a.location_id)
             if not location:
                 continue
 
-            filtered_rooms = []
             for sector in location.sectors:
                 for category in sector.categories:
                     for room in category.rooms:
                         if room.zone and room.zone.lower() == zone.lower():
-                            filtered_rooms.append({
-                                "room_name": room.name,
-                                "sector": sector.name,
-                                "category": category.name
-                            })
+                            grouped_data.setdefault(location.name, {}) \
+                                .setdefault(sector.name, []) \
+                                .append({
+                                    "room_name": room.name,
+                                    "category": category.name,
+                                    "zone": room.zone
+                                })
 
-            if filtered_rooms:
-                data.append({
-                    "location": location.name,
-                    "zone": zone,
-                    "rooms": filtered_rooms
-                })
-
-        return jsonify(data), 200
+        print(f"✅ Returning grouped data for zone '{zone}': {len(grouped_data)} locations found.")
+        return jsonify(grouped_data), 200
 
     except Exception as e:
         print(f"❌ Exception in get_rooms_by_zone: {e}")
