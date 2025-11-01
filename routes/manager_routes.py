@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import db, User, Location, Sector, Category, Room, Assignment
+from models.supervisor_assignment import SupervisorAssignment
+
 
 manager_bp = Blueprint('manager_bp', __name__)
 
@@ -119,18 +121,27 @@ def get_supervisors_for_manager(manager_id):
         if current_user_id != manager_id:
             return jsonify({"error": "Forbidden: token mismatch"}), 403
 
-        assignments = SupervisorAssignment.query.filter_by(manager_id=manager_id).all()
-        supervisors = [
+        # Ensure this user is actually a Custodial Manager
+        manager = User.query.get(manager_id)
+        if not manager or manager.role != "Custodial Manager":
+            return jsonify({"error": "Unauthorized: only Custodial Managers can access this"}), 403
+
+        # Fetch all supervisors assigned to this manager
+        supervisors = User.query.filter_by(assigned_manager_id=manager_id, role="Supervisor").all()
+
+        result = [
             {
-                "id": a.supervisor.id,
-                "name": f"{a.supervisor.first_name} {a.supervisor.last_name}",
-                "email": a.supervisor.email,
+                "id": s.id,
+                "name": f"{s.first_name} {s.last_name}",
+                "email": s.email,
             }
-            for a in assignments
+            for s in supervisors
         ]
-        return jsonify(supervisors), 200
+
+        return jsonify(result), 200
 
     except Exception as e:
         print(f"❌ Error in get_supervisors_for_manager: {e}")
         return jsonify({"error": str(e)}), 500
+
 
