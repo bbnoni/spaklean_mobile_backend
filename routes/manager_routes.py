@@ -126,7 +126,7 @@ def get_supervisors_for_manager(manager_id):
         if not manager or manager.role != "Custodial Manager":
             return jsonify({"error": "Unauthorized: only Custodial Managers can access this"}), 403
 
-        # Fetch all supervisors assigned to this manager
+        # Fetch all supervisors assigned to this manager#
         supervisors = User.query.filter_by(assigned_manager_id=manager_id, role="Supervisor").all()
 
         result = [
