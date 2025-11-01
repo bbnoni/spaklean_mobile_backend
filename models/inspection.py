@@ -7,7 +7,8 @@ class InspectionTask(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)               # user performing inspection
     done_on_behalf_user_id = db.Column(db.Integer, nullable=True) # optional
-    room_id = db.Column(db.Integer, nullable=False)
+    #room_id = db.Column(db.Integer, nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=True)
     zone_name = db.Column(db.String(100))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
