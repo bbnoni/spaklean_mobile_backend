@@ -13,6 +13,8 @@ class User(db.Model):
     role = db.Column(db.String(50), default='Custodian')
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    assigned_manager_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+
 
     def __repr__(self):
         return f"<User {self.email}>"
