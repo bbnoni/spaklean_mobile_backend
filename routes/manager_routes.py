@@ -108,3 +108,29 @@ def get_rooms_by_zone(user_id, zone):
     except Exception as e:
         print(f"❌ Exception in get_rooms_by_zone: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+
+@manager_bp.route("/manager/<int:manager_id>/supervisors", methods=["GET"])
+@jwt_required()
+def get_supervisors_for_manager(manager_id):
+    try:
+        current_user_id = int(get_jwt_identity())
+        if current_user_id != manager_id:
+            return jsonify({"error": "Forbidden: token mismatch"}), 403
+
+        assignments = SupervisorAssignment.query.filter_by(manager_id=manager_id).all()
+        supervisors = [
+            {
+                "id": a.supervisor.id,
+                "name": f"{a.supervisor.first_name} {a.supervisor.last_name}",
+                "email": a.supervisor.email,
+            }
+            for a in assignments
+        ]
+        return jsonify(supervisors), 200
+
+    except Exception as e:
+        print(f"❌ Error in get_supervisors_for_manager: {e}")
+        return jsonify({"error": str(e)}), 500
+
